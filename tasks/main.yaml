@@ -1,0 +1,36 @@
+---
+
+- name: shutdown services or sockets
+  service:
+    name: "{{ item }}"
+    state: "{{ snapd_state }}"
+    enabled: "{{ snapd_enabled }}"
+  failed_when: false
+  # ignore_errors: true
+  no_log: true
+  loop:
+    - snapd.service
+    - snapd.socket
+
+- name: remove snapd packages
+  package:
+    name: snapd
+    state: absent
+    purge: true
+  when:
+    - not snapd_installed
+
+- name: remove snapd-related directories
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /snap
+    - /var/snap
+    - /var/lib/snapd
+    - /run/snapd-snap.socket
+    - /run/snapd.socket
+  when:
+    - not snapd_installed
+
+...

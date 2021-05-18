@@ -1,0 +1,8 @@
+---
+
+snapd_state: stopped
+snapd_enabled: false
+
+snapd_installed: false
+
+...

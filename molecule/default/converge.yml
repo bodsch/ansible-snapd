@@ -1,0 +1,11 @@
+---
+
+- name: all
+  hosts: all
+  any_errors_fatal: false
+
+  environment:
+    NETRC: ''
+
+  roles:
+    - role: ansible-snapd
