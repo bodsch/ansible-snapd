@@ -51,18 +51,30 @@ def get_vars(host):
 
 
 @pytest.mark.parametrize("dirs", [
-    "/opt/urbanterror",
+    "/snap",
+    "/var/snap",
+    "/var/lib/snapd"
 ])
 def test_directories(host, dirs):
     d = host.file(dirs)
-    assert d.is_directory
-    assert d.exists
+    assert not d.exists
 
 
 @pytest.mark.parametrize("files", [
-    "/opt/urbanterror/server.sh",
+    "/run/snapd-snap.socket",
+    "/run/snapd.socket"
 ])
 def test_files(host, files):
     f = host.file(files)
-    assert f.exists
-    assert f.is_file
+    assert not f.exists
+
+
+def test_installed_package(host):
+    p = host.package("snapd")
+    assert not p.is_installed
+
+
+def test_service(host):
+    service = host.service("snapd")
+    assert not service.is_enabled
+    assert not service.is_running
