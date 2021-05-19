@@ -7,7 +7,7 @@
     enabled: "{{ snapd_enabled }}"
   failed_when: false
   # ignore_errors: true
-  no_log: true
+  # no_log: true
   loop:
     - snapd.service
     - snapd.socket
@@ -16,7 +16,7 @@
   package:
     name: snapd
     state: absent
-    purge: true
+    # purge: true
   when:
     - not snapd_installed
 
@@ -28,6 +28,7 @@
     - /snap
     - /var/snap
     - /var/lib/snapd
+    - /var/cache/snapd
     - /run/snapd-snap.socket
     - /run/snapd.socket
   when:
