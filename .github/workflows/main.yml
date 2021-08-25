@@ -14,40 +14,24 @@ defaults:
     working-directory: 'ansible-snapd'
 
 jobs:
-
   lint:
-    name: Lint
-    runs-on: ubuntu-18.04
+    name: linting
+    runs-on: ubuntu-latest
     steps:
-      - name: check out the codebase.
+      - name: checkout
         uses: actions/checkout@v2
         with:
-          path: 'ansible-snapd'
+          fetch-depth: 0
 
-      - name: set up python.
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'
-
-      - name: install dependencies.
-        run: |
-          set +e
-          sudo apt-get update
-          sudo apt-get install -y python3-pip python3-setuptools
-          sudo pip3 install ansible==2.10.6 ansible-lint==5.0.0 yamllint==1.26.0 flake8==3.8.4 PyYAML==5.3.1
-
-      - name: YAMLlint
-        run: |
-          yamllint --version
-          yamllint .
-      - name: ansible-lint
-        run: |
-          ansible-lint --version
-          ansible-lint .
-      - name: flake8
-        run: |
-          flake8 --version
-          flake8 .
+      - name: lint
+        uses: docker://ghcr.io/github/super-linter:slim-v4
+        env:
+          # DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GH_REGISTRY_TOKEN }}
+          VALIDATE_ALL_CODEBASE: true
+          VALIDATE_ANSIBLE: true
+          # VALIDATE_MARKDOWN: trues
+          VALIDATE_YAML: true
 
   test:
     name: "${{ matrix.image }} / python: ${{ matrix.python-version }}, ansible: ${{ matrix.ansible-version }}"
