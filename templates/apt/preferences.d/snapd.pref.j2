@@ -1,0 +1,6 @@
+{% for p in snapd_block_packages %}
+Package: {{ p }}
+Pin: release *
+Pin-Priority: -1
+
+{% endfor %}

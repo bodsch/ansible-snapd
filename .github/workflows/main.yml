@@ -33,7 +33,7 @@ jobs:
           # VALIDATE_MARKDOWN: trues
           VALIDATE_YAML: true
 
-  test:
+  deb:
     name: "${{ matrix.image }} / python: ${{ matrix.python-version }}, ansible: ${{ matrix.ansible-version }}"
     needs:
       - lint
@@ -42,16 +42,14 @@ jobs:
       fail-fast: false
       matrix:
         image:
+          - debian:9
           - debian:10
+          - debian:11
           - ubuntu:18.04
           - ubuntu:20.04
-          - centos:8
-          - oraclelinux:8
         python-version:
-          - '3.8'
           - '3.9'
         ansible-version:
-          - '2.9'
           - '2.10'
 
     steps:
@@ -72,7 +70,49 @@ jobs:
 
       - name: test with tox
         run: |
-          tox -e py$(printf "${{ matrix.python-version }}" | tr -d '.')-ansible$(printf "${{ matrix.ansible-version }}" | tr -d '.') -- molecule test
+          tox -e py$(printf "${{ matrix.python-version }}" | tr -d '.')-ansible$(printf "${{ matrix.ansible-version }}" | tr -d '.') -- \
+            molecule test
+        env:
+          PY_COLORS: '1'
+          ANSIBLE_FORCE_COLOR: '1'
+          DISTRIBUTION: ${{ matrix.image }}
+
+  rpm:
+    name: "${{ matrix.image }} / python: ${{ matrix.python-version }}, ansible: ${{ matrix.ansible-version }}"
+    needs:
+      - lint
+    runs-on: ubuntu-18.04
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - centos:8
+          - oraclelinux:8
+        python-version:
+          - '3.9'
+        ansible-version:
+          - '2.10'
+
+    steps:
+      - name: check out the codebase.
+        uses: actions/checkout@v2
+        with:
+          path: 'ansible-snapd'
+
+      - name: set up python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r test-requirements.txt
+
+      - name: test with tox
+        run: |
+          tox -e py$(printf "${{ matrix.python-version }}" | tr -d '.')-ansible$(printf "${{ matrix.ansible-version }}" | tr -d '.') -- \
+            molecule test
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
