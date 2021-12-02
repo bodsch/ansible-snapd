@@ -118,13 +118,14 @@ jobs:
           ANSIBLE_FORCE_COLOR: '1'
           DISTRIBUTION: ${{ matrix.image }}
 
-  # publish:
-  #   if: github.ref == 'refs/heads/master'
-  #   needs:
-  #     - test
-  #   runs-on: ubuntu-18.04
-  #   steps:
-  #     - name: galaxy
-  #       uses: robertdebock/galaxy-action@1.1.0
-  #       with:
-  #         galaxy_api_key: ${{ secrets.galaxy_api_key }}
+  publish:
+    if: github.ref == 'refs/heads/main'
+    needs:
+      - deb
+      - rpm
+    runs-on: ubuntu-18.04
+    steps:
+      - name: galaxy
+        uses: robertdebock/galaxy-action@1.1.0
+        with:
+          galaxy_api_key: ${{ secrets.galaxy_api_key }}
