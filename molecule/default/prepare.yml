@@ -12,3 +12,8 @@
           - "distribution version : {{ ansible_distribution_major_version }}"
           - "ansible version      : {{ ansible_version.full }}"
           - "python version       : {{ ansible_python.version.major }}.{{ ansible_python.version.minor }}"
+
+    - name: install findutils
+      package:
+        name: findutils
+        state: present
