@@ -11,3 +11,33 @@ disable and remove snapd
 [issues]: https://github.com/bodsch/ansible-snapd/issues?q=is%3Aopen+is%3Aissue
 [releases]: https://github.com/bodsch/ansible-snapd/releases
 
+
+## Requirements & Dependencies
+
+- None
+
+### Operating systems
+
+Tested on
+
+* Debian based
+    - Debian 10 / 11
+    - Ubuntu 20.10
+* RedHat based
+    - CentOS 8 (**not longer supported**)
+    - Alma Linux 8
+    - Rocky Linux 8
+    - Oracle Linux 8
+
+
+---
+
+## Author and License
+
+- Bodo Schulz
+
+## License
+
+[BSD](LICENSE)
+
+**FREE SOFTWARE, HELL YEAH!**
