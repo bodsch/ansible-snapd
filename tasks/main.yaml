@@ -38,6 +38,9 @@
               command: apt-get clean
               args:
                 warn: false
+              register: apt_clean
+              changed_when: apt_clean.rc != 0
+              failed_when: apt_clean.rc != 0
 
             - name: update package cache
               package:
