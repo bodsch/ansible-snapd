@@ -42,15 +42,13 @@ jobs:
       fail-fast: false
       matrix:
         image:
-          - debian:9
           - debian:10
           - debian:11
-          - ubuntu:18.04
           - ubuntu:20.04
         python-version:
           - '3.9'
         ansible-version:
-          - '3.4.0'
+          - '4.1.0'
           - '5.1.0'
 
     steps:
@@ -93,7 +91,7 @@ jobs:
         python-version:
           - '3.9'
         ansible-version:
-          - '3.4.0'
+          - '4.1.0'
           - '5.1.0'
 
     steps:
