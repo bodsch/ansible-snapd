@@ -1,7 +1,7 @@
 
 # Ansible Role:  `snapd`
 
-disable and remove snapd
+Disable and removes (purges) snapd and related services/packages.
 
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/bodsch/ansible-snapd/CI)][ci]
 [![GitHub issues](https://img.shields.io/github/issues/bodsch/ansible-snapd)][issues]
@@ -64,6 +64,14 @@ snapd_block_packages:
   - libsnapd-qt1
   - snapd-xdg-open
   - qml-module-snapd
+```
+
+### local Tests
+
+With a locally installed and running dockerd, the role can be tested with different Ansible versions and operating system distributions:
+
+```
+make [-e TOX_ANSIBLE=ansible_${ansible_version}] [-e DISTRIBUTION=ubuntu:20.04]
 ```
 
 ---
