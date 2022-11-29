@@ -1,3 +1,6 @@
 ---
-skip_list:
-  - role-name
+
+skip_list: []
+
+warn_list:
+  - name[casing]

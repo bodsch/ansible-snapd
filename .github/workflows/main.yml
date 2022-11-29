@@ -1,43 +1,30 @@
 ---
 name: CI
-'on':
-  pull_request:
-  push:
+
+on:
+  schedule:
+    - cron: "0 5 * * 0"
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - "code linter"
     branches:
       - main
-      - master
-  schedule:
-    - cron: "0 2 * * 0"
+      - feature/*
+      - fix/*
+    types:
+      - completed
 
 defaults:
   run:
     working-directory: 'ansible-snapd'
 
 jobs:
-  lint:
-    name: linting
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: lint
-        uses: docker://ghcr.io/github/super-linter:slim-v4
-        env:
-          # DEFAULT_BRANCH: master
-          GITHUB_TOKEN: ${{ secrets.GH_REGISTRY_TOKEN }}
-          VALIDATE_ALL_CODEBASE: true
-          VALIDATE_ANSIBLE: true
-          # VALIDATE_MARKDOWN: trues
-          VALIDATE_YAML: true
 
   deb:
-    name: "${{ matrix.image }} / python: ${{ matrix.python-version }}, ansible: ${{ matrix.ansible-version }}"
-    needs:
-      - lint
-    runs-on: ubuntu-18.04
+    name: "${{ matrix.image }} / ansible: ${{ matrix.ansible-version }}"
+    runs-on: ubuntu-20.04
+    if: ${{ github.event_name == 'schedule' || github.event.workflow_run.conclusion == 'success' }}
     strategy:
       fail-fast: false
       matrix:
@@ -45,22 +32,24 @@ jobs:
           - debian:10
           - debian:11
           - ubuntu:20.04
-        python-version:
-          - '3.9'
+          - ubuntu:22.04
         ansible-version:
-          - '4.1.0'
-          - '5.1.0'
+          - '5.1'
+          - '6.1'
+          - '7.0'
+        scenario:
+          - default
 
     steps:
       - name: check out the codebase.
         uses: actions/checkout@v2
         with:
-          path: 'ansible-snapd'
+          path: 'ansible-icinga2'
 
-      - name: set up python ${{ matrix.python-version }}
+      - name: 🐍 set up python
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.x'
 
       - name: install dependencies
         run: |
@@ -69,18 +58,17 @@ jobs:
 
       - name: test with tox
         run: |
-          tox -e py$(printf "${{ matrix.python-version }}" | tr -d '.')-ansible$(printf "${{ matrix.ansible-version }}" | tr -d '.') -- \
-            molecule test
+          tox -e ansible_$(printf "${{ matrix.ansible-version }}") \
+            -- molecule test --scenario-name default
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
           DISTRIBUTION: ${{ matrix.image }}
 
   rpm:
-    name: "${{ matrix.image }} / python: ${{ matrix.python-version }}, ansible: ${{ matrix.ansible-version }}"
-    needs:
-      - lint
-    runs-on: ubuntu-18.04
+    name: "${{ matrix.image }} / ansible: ${{ matrix.ansible-version }}"
+    runs-on: ubuntu-20.04
+    if: ${{ github.event_name == 'schedule' || github.event.workflow_run.conclusion == 'success' }}
     strategy:
       fail-fast: false
       matrix:
@@ -88,22 +76,20 @@ jobs:
           - oraclelinux:8
           - rockylinux:8
           - almalinux:8
-        python-version:
-          - '3.9'
         ansible-version:
-          - '4.1.0'
-          - '5.1.0'
+          - '4.10'
+          - '5.1'
 
     steps:
       - name: check out the codebase.
         uses: actions/checkout@v2
         with:
-          path: 'ansible-snapd'
+          path: 'ansible-icinga2'
 
-      - name: set up python ${{ matrix.python-version }}
+      - name: 🐍 set up python
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.x'
 
       - name: install dependencies
         run: |
@@ -112,22 +98,9 @@ jobs:
 
       - name: test with tox
         run: |
-          tox -e py$(printf "${{ matrix.python-version }}" | tr -d '.')-ansible$(printf "${{ matrix.ansible-version }}" | tr -d '.') -- \
-            molecule test
+          tox -e ansible_$(printf "${{ matrix.ansible-version }}") \
+            -- molecule test --scenario-name default
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
           DISTRIBUTION: ${{ matrix.image }}
-
-  publish:
-    if: github.ref == 'refs/heads/main'
-    needs:
-      - deb
-      - rpm
-    runs-on: ubuntu-18.04
-    steps:
-      - name: galaxy
-        uses: robertdebock/galaxy-action@1.2.0
-        with:
-          galaxy_api_key: ${{ secrets.galaxy_api_key }}
-          git_branch: main

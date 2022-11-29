@@ -5,6 +5,8 @@ snapd_purge: true
 snapd_state: stopped
 snapd_enabled: false
 
+snapd_block_later_installation: true
+
 snapd_services:
   - snapd.apparmor.service
   - snapd.autoimport.service
@@ -35,5 +37,6 @@ snapd_block_packages:
   - libsnapd-qt1
   - snapd-xdg-open
   - qml-module-snapd
+
 
 ...

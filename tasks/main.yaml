@@ -1,7 +1,7 @@
 ---
 
 - name: shutdown services, sockets and timers
-  service:
+  ansible.builtin.service:
     name: "{{ item }}"
     state: "{{ snapd_state }}"
     enabled: "{{ snapd_enabled }}"
@@ -10,62 +10,63 @@
     "{{ snapd_services }}"
 
 - name: purge all these bullshit
+  when:
+    - snapd_purge
   block:
     - name: debian based
+      when:
+        - ansible_os_family | lower == 'debian'
       block:
 
         - name: make sure python3-apt is installed
-          package:
+          ansible.builtin.package:
             name:
               - python3-apt
             state: present
 
         - name: remove snapd packages (debian)
-          package:
+          ansible.builtin.package:
             name: "{{ snapd_block_packages }}"
             state: absent
             purge: true
 
-        - name: block
+        - name: block installation
+          when:
+            - snapd_block_packages is defined
+            - snapd_block_packages | count > 0
           block:
             - name: block later installations of snapd
-              template:
+              ansible.builtin.template:
                 src: apt/preferences.d/snapd.pref.j2
                 dest: /etc/apt/preferences.d/snapd.pref
                 mode: 0644
+              when:
+                - snapd_block_later_installation
 
             - name: clean apt cache
-              command: apt-get clean
-              args:
-                warn: false
+              ansible.builtin.command: |
+                apt-get clean
               register: apt_clean
               changed_when: apt_clean.rc != 0
               failed_when: apt_clean.rc != 0
 
             - name: update package cache
-              package:
+              ansible.builtin.package:
                 update_cache: true
 
-          when:
-            - snapd_block_packages is defined
-            - snapd_block_packages | count > 0
-      when:
-        - ansible_os_family | lower == 'debian'
-
     - name: remove snapd packages (other)
-      package:
+      ansible.builtin.package:
         name: "{{ snapd_block_packages }}"
         state: absent
       when:
         - ansible_os_family | lower != 'debian'
 
     - name: remove snapd-related directories
-      file:
+      ansible.builtin.file:
         path: "{{ item }}"
         state: absent
       loop: "{{ snapd_files }}"
       loop_control:
         label: "{{ item }}"
-  when:
-    - snapd_purge
+
 ...
