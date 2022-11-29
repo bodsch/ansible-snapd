@@ -22,12 +22,49 @@ Tested on
 
 * Debian based
     - Debian 10 / 11
-    - Ubuntu 20.10
-* RedHat based
-    - Alma Linux 8
-    - Rocky Linux 8
-    - Oracle Linux 8
+    - Ubuntu 20.04 / 22.04
 
+## usage
+
+```
+snapd_purge: true
+
+snapd_state: stopped
+snapd_enabled: false
+
+snapd_block_later_installation: true
+
+snapd_services:
+  - snapd.apparmor.service
+  - snapd.autoimport.service
+  - snapd.core-fixup.service
+  - snapd.recovery-chooser-trigger.service
+  - snapd.seeded.service
+  - snapd.service
+  - snapd.snap-repair.timer
+  - snapd.socket
+  - snapd.system-shutdown.service
+
+snapd_files:
+  - /snap
+  - /var/snap
+  - /var/lib/snapd
+  - /var/cache/snapd
+  - /run/snapd-snap.socket
+  - /run/snapd.socket
+  - /etc/apt/apt.conf.d/20snapd.conf
+
+snapd_block_packages:
+  - snapd
+  - snap-confine
+  - ubuntu-core-snapd-units
+  - ubuntu-core-launcher
+  - libsnapd-glib1
+  - gir1.2-snapd-1
+  - libsnapd-qt1
+  - snapd-xdg-open
+  - qml-module-snapd
+```
 
 ---
 

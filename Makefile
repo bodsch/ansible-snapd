@@ -1,7 +1,6 @@
 #
 export TOX_SCENARIO  ?= default
-export TOX_PYTHON    ?= py310
-export TOX_ANSIBLE   ?= ansible510
+export TOX_ANSIBLE   ?= ansible_6.1
 
 .PHONY: converge destroy verify lint
 

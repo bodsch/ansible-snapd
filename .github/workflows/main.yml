@@ -21,7 +21,7 @@ defaults:
 
 jobs:
 
-  deb:
+  debian:
     name: "${{ matrix.image }} / ansible: ${{ matrix.ansible-version }}"
     runs-on: ubuntu-20.04
     if: ${{ github.event_name == 'schedule' || github.event.workflow_run.conclusion == 'success' }}
@@ -31,8 +31,6 @@ jobs:
         image:
           - debian:10
           - debian:11
-          - ubuntu:20.04
-          - ubuntu:22.04
         ansible-version:
           - '5.1'
           - '6.1'
@@ -65,7 +63,7 @@ jobs:
           ANSIBLE_FORCE_COLOR: '1'
           DISTRIBUTION: ${{ matrix.image }}
 
-  rpm:
+  ubuntu:
     name: "${{ matrix.image }} / ansible: ${{ matrix.ansible-version }}"
     runs-on: ubuntu-20.04
     if: ${{ github.event_name == 'schedule' || github.event.workflow_run.conclusion == 'success' }}
@@ -73,12 +71,14 @@ jobs:
       fail-fast: false
       matrix:
         image:
-          - oraclelinux:8
-          - rockylinux:8
-          - almalinux:8
+          - ubuntu:20.04
+          - ubuntu:22.04
         ansible-version:
-          - '4.10'
           - '5.1'
+          - '6.1'
+          - '7.0'
+        scenario:
+          - default
 
     steps:
       - name: check out the codebase.

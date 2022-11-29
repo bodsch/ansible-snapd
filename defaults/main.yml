@@ -38,5 +38,4 @@ snapd_block_packages:
   - snapd-xdg-open
   - qml-module-snapd
 
-
 ...

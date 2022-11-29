@@ -1,6 +1,7 @@
 ---
 
-skip_list: []
-
-warn_list:
+skip_list:
   - name[casing]
+  - command-instead-of-module
+
+warn_list: []
