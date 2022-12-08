@@ -2,6 +2,5 @@
 
 skip_list:
   - name[casing]
-  - command-instead-of-module
-
-warn_list: []
+  - name[template]
+  - command-instead-of-module  # Using command rather than module.

@@ -25,7 +25,7 @@ provisioner:
   name: ansible
   ansible_args:
     - --diff
-    - -v
+    # - -v
   config_options:
     defaults:
       deprecation_warnings: True

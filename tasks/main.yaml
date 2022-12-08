@@ -17,7 +17,6 @@
       when:
         - ansible_os_family | lower == 'debian'
       block:
-
         - name: make sure python3-apt is installed
           ansible.builtin.package:
             name:
@@ -49,6 +48,12 @@
               register: apt_clean
               changed_when: apt_clean.rc != 0
               failed_when: apt_clean.rc != 0
+              when: "ansible_version.full is version_compare('2.13', '<')"
+
+            - name: clean apt cache
+              ansible.builtin.apt:
+                clean: true
+              when: "ansible_version.full is version_compare('2.13', '>=')"
 
             - name: update package cache
               ansible.builtin.package:
