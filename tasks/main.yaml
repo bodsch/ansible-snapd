@@ -42,7 +42,7 @@
               when:
                 - snapd_block_later_installation
 
-            - name: clean apt cache
+            - name: clean apt cache  # noqa command-instead-of-module
               ansible.builtin.command: |
                 apt-get clean
               register: apt_clean

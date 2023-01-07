@@ -3,4 +3,3 @@
 skip_list:
   - name[casing]
   - name[template]
-  - command-instead-of-module  # Using command rather than module.

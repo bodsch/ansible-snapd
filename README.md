@@ -3,13 +3,15 @@
 
 Disable and removes (purges) snapd and related services/packages.
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/bodsch/ansible-snapd/CI)][ci]
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/bodsch/ansible-snapd/main.yml?branch=main)][ci]
 [![GitHub issues](https://img.shields.io/github/issues/bodsch/ansible-snapd)][issues]
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/bodsch/ansible-snapd)][releases]
+[![Ansible Quality Score](https://img.shields.io/ansible/quality/50067?label=role%20quality)][quality]
 
 [ci]: https://github.com/bodsch/ansible-snapd/actions
 [issues]: https://github.com/bodsch/ansible-snapd/issues?q=is%3Aopen+is%3Aissue
 [releases]: https://github.com/bodsch/ansible-snapd/releases
+[quality]: https://galaxy.ansible.com/bodsch/snapd
 
 
 ## Requirements & Dependencies
