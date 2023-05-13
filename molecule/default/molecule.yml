@@ -25,16 +25,19 @@ provisioner:
   name: ansible
   ansible_args:
     - --diff
-    # - -v
+    - -v
   config_options:
     defaults:
-      deprecation_warnings: True
+      deprecation_warnings: true
       stdout_callback: yaml
       callbacks_enabled: profile_tasks
+      gathering: smart
+      fact_caching: jsonfile
+      fact_caching_timeout: 8640
+      fact_caching_connection: ansible_facts
 
 scenario:
   test_sequence:
-    - lint
     - destroy
     - dependency
     - syntax

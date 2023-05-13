@@ -3,12 +3,37 @@
 name: code linter
 
 on:
+  schedule:
+    - cron: "40 4 * * 0"
   workflow_dispatch:
-  pull_request:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
   push:
     branches:
-      - main
-      - testing
+      - 'main'
+      - 'feature/**'
+      - '!doc/**'
+    paths:
+      - "!Makefile"
+      - "!README.md"
+      - "tasks/**"
+  pull_request:
+    branches:
+      - 'main'
+      - 'feature/**'
+      - '!doc/**'
+    paths:
+      - "!Makefile"
+      - "!README.md"
+      - "tasks/**"
 
 jobs:
   lint:
@@ -17,8 +42,6 @@ jobs:
     steps:
       - name: 🛎 Checkout
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
       - name: lint
         uses: docker://ghcr.io/github/super-linter:slim-v4

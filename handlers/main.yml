@@ -1,0 +1,20 @@
+---
+
+- name: clean apt cache (ansible < 2.13) # noqa command-instead-of-module
+  listen: clean apt cache
+  ansible.builtin.command: |
+    apt-get clean
+  register: apt_clean
+  changed_when: apt_clean.rc != 0
+  failed_when: apt_clean.rc != 0
+  when: "ansible_version.full is version_compare('2.13', '<')"
+
+- name: clean apt cache (ansible >= 2.13)
+  listen: clean apt cache
+  ansible.builtin.apt:
+    clean: true
+  when: "ansible_version.full is version_compare('2.13', '>=')"
+
+- name: update package cache
+  ansible.builtin.package:
+    update_cache: true

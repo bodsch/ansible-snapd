@@ -1,0 +1,28 @@
+---
+
+snapd_defaults_services:
+  - snapd.apparmor.service
+  - snapd.seeded.service
+  - snapd.service
+
+snapd_defaults_files:
+  - /snap
+  - /var/snap
+  - /var/lib/snapd
+  - /var/cache/snapd
+  - /run/snapd-snap.socket
+  - /run/snapd.socket
+  - /etc/apt/apt.conf.d/20snapd.conf
+
+snapd_defaults_block_packages:
+  - snapd
+  - snap-confine
+  - ubuntu-core-snapd-units
+  - ubuntu-core-launcher
+  - libsnapd-glib1
+  - gir1.2-snapd-1
+  - libsnapd-qt1
+  - snapd-xdg-open
+  - qml-module-snapd
+
+...

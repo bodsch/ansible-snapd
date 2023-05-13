@@ -1,0 +1,68 @@
+---
+
+- name: run only for debian based
+  when:
+    - ansible_os_family | lower != "debian"
+  block:
+    - name: message
+      ansible.builtin.debug:
+        msg: "This role only works with Debian-based distributions."
+
+    - name: end
+      ansible.builtin.meta: end_host
+
+- name: merge snapd configuration between defaults and custom
+  ansible.builtin.set_fact:
+    snapd_services: "{{ snapd_defaults_services | union(snapd_services) | unique }}"
+    snapd_files: "{{ snapd_defaults_files | union(snapd_files) | unique }}"
+    snapd_block_packages: "{{ snapd_defaults_block_packages | union(snapd_block_packages) | unique }}"
+
+- name: shutdown services, sockets and timers
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: "{{ snapd_state }}"
+    enabled: "{{ snapd_enabled }}"
+  failed_when: false
+  loop:
+    "{{ snapd_services }}"
+  loop_control:
+    label: "{{ item }}"
+
+- name: purge all this bullshit
+  when:
+    - snapd_purge
+  block:
+    - name: remove snapd packages
+      ansible.builtin.package:
+        name: "{{ snapd_block_packages }}"
+        state: absent
+        purge: true
+
+    - name: block installation
+      when:
+        - snapd_block_packages is defined
+        - snapd_block_packages | count > 0
+      block:
+        - name: block later installations of snapd
+          ansible.builtin.template:
+            src: apt/preferences.d/snapd.pref.j2
+            dest: /etc/apt/preferences.d/snapd.pref
+            mode: 0644
+          notify:
+            - clean apt cache
+            - update package cache
+          when:
+            - snapd_block_later_installation
+
+    - name: remove snapd-related directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop: "{{ snapd_files }}"
+      loop_control:
+        label: "{{ item }}"
+
+- name: flush handlers
+  ansible.builtin.meta: flush_handlers
+
+...

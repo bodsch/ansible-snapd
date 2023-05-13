@@ -14,17 +14,14 @@ Disable and removes (purges) snapd and related services/packages.
 [quality]: https://galaxy.ansible.com/bodsch/snapd
 
 
-## Requirements & Dependencies
+### Tested on
 
-- None
-
-### Operating systems
-
-Tested on
-
-* Debian based
-    - Debian 10 / 11
-    - Ubuntu 20.04 / 22.04
+- Debian 10
+- Debian 11
+- Ubuntu 20.04
+- Ubuntu 22.04
+- Ubuntu 22.10
+- Ubuntu 23.04
 
 ## usage
 
@@ -37,43 +34,12 @@ snapd_enabled: false
 snapd_block_later_installation: true
 
 snapd_services:
-  - snapd.apparmor.service
-  - snapd.autoimport.service
-  - snapd.core-fixup.service
-  - snapd.recovery-chooser-trigger.service
-  - snapd.seeded.service
   - snapd.service
-  - snapd.snap-repair.timer
-  - snapd.socket
-  - snapd.system-shutdown.service
 
 snapd_files:
-  - /snap
-  - /var/snap
-  - /var/lib/snapd
-  - /var/cache/snapd
-  - /run/snapd-snap.socket
-  - /run/snapd.socket
   - /etc/apt/apt.conf.d/20snapd.conf
 
-snapd_block_packages:
-  - snapd
-  - snap-confine
-  - ubuntu-core-snapd-units
-  - ubuntu-core-launcher
-  - libsnapd-glib1
-  - gir1.2-snapd-1
-  - libsnapd-qt1
-  - snapd-xdg-open
-  - qml-module-snapd
-```
-
-### local Tests
-
-With a locally installed and running dockerd, the role can be tested with different Ansible versions and operating system distributions:
-
-```
-make [-e TOX_ANSIBLE=ansible_${ansible_version}] [-e DISTRIBUTION=ubuntu:20.04]
+snapd_block_packages: []
 ```
 
 ---

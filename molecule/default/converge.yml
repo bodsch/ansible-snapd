@@ -1,11 +1,9 @@
 ---
 
-- name: all
-  hosts: all
+- name: converge
+  hosts: instance
   any_errors_fatal: false
-
-  environment:
-    NETRC: ''
+  become: false
 
   roles:
     - role: ansible-snapd
