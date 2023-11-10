@@ -18,9 +18,9 @@ Disable and removes (purges) snapd and related services/packages.
 
 - Debian 10
 - Debian 11
+- Debian 12
 - Ubuntu 20.04
 - Ubuntu 22.04
-- Ubuntu 22.10
 - Ubuntu 23.04
 
 ## usage

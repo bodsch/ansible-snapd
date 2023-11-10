@@ -7,7 +7,7 @@ galaxy_info:
   description: ansible role to disable and removes (purges) snapd and related services/packages.
 
   license: "BSD"
-  min_ansible_version: "2.12"
+  min_ansible_version: "2.9"
 
   platforms:
     - name: Debian
