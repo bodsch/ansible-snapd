@@ -73,7 +73,7 @@
           ansible.builtin.template:
             src: apt/preferences.d/snapd.pref.j2
             dest: /etc/apt/preferences.d/snapd.pref
-            mode: 0644
+            mode: "0644"
           notify:
             - clean apt cache
             - update package cache
