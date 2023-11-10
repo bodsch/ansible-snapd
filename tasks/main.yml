@@ -17,6 +17,32 @@
     snapd_files: "{{ snapd_defaults_files | union(snapd_files) | unique }}"
     snapd_block_packages: "{{ snapd_defaults_block_packages | union(snapd_block_packages) | unique }}"
 
+- name: remove snap packages
+  when:
+    - snapd_purge
+  block:
+    - name: check installed snaps
+      ansible.builtin.command: "snap list"
+      register: snap_list_output
+      changed_when: false
+      failed_when: false
+
+    - name: snap packages
+      ansible.builtin.set_fact:
+        snap_list: "{{ snap_list_output.stdout_lines[1:] }}"
+      when:
+        - snap_list_output.rc == 0
+
+    - name: uninstall snaps
+      include_tasks: "uninstall_snaps.yml"
+      when:
+        - snap_list_output.rc == 0
+        - snap_list | length > 0
+      loop_control:
+        loop_var: snaps_to_remove
+      loop:
+        "{{ snap_list }}"
+
 - name: shutdown services, sockets and timers
   ansible.builtin.service:
     name: "{{ item }}"
