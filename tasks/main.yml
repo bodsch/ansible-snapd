@@ -15,7 +15,7 @@
   ansible.builtin.set_fact:
     snapd_services: "{{ snapd_defaults_services | union(snapd_services) | unique }}"
     snapd_files: "{{ snapd_defaults_files | union(snapd_files) | unique }}"
-    snapd_block_packages: "{{ snapd_defaults_block_packages | union(snapd_block_packages) | unique }}"
+    snapd_block_packages: "{{ snapd_defaults_block_packages | union(snapd_block_packages) | unique | sort }}"
 
 - name: remove snap packages
   when:
