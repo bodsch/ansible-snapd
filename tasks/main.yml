@@ -44,6 +44,7 @@
         "{{ snap_list }}"
 
 - name: shutdown services, sockets and timers
+  become: true
   ansible.builtin.service:
     name: "{{ item }}"
     state: "{{ snapd_state }}"
@@ -58,7 +59,16 @@
   when:
     - snapd_purge
   block:
+  - name: Unmount snap
+      become: true
+      mount:
+        path: "/var/snap/firefox/common/host-hunspell"
+        state: "{{ item }}"
+      with_items:
+        - unmounted
+        - absent
     - name: remove snapd packages
+      become: true
       ansible.builtin.package:
         name: "{{ snapd_block_packages }}"
         state: absent
@@ -70,6 +80,7 @@
         - snapd_block_packages | count > 0
       block:
         - name: block later installations of snapd
+        become: true
           ansible.builtin.template:
             src: apt/preferences.d/snapd.pref.j2
             dest: /etc/apt/preferences.d/snapd.pref
@@ -81,6 +92,7 @@
             - snapd_block_later_installation
 
     - name: remove snapd-related directories
+      become: true
       ansible.builtin.file:
         path: "{{ item }}"
         state: absent
