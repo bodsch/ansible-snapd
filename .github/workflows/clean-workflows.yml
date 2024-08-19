@@ -4,7 +4,7 @@ name: delete workflow runs
 
 on:
   schedule:
-    - cron: "10 4 * * 0"
+    - cron: "20 4 * * 0"
   workflow_dispatch:
     inputs:
       logLevel:
@@ -16,16 +16,40 @@ on:
           - info
           - warning
           - debug
+      minimum_kept:
+        description: 'Minimum number per workflow to be kept.'
+        required: true
+        default: 2
 
 jobs:
+
   delete-workflow-runs:
     runs-on: ubuntu-latest
     name: delete old workflow runs
+    permissions:
+      actions: write
+      contents: read
     steps:
-      - name: Delete workflow runs
-        uses: MajorScruffy/delete-old-workflow-runs@v0.3.0
+      - name: Check out the codebase.
+        uses: actions/checkout@v4
         with:
-          repository: bodsch/ansible-snapd
-          older-than-seconds: 2592000                          # remove all workflow runs older than 30 day
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      - name: 🐍 set up python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: clean workflow
+        run: |
+          make \
+            gh-clean
+
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          GH_KEEP_WORKFLOWS: ${{ github.event.inputs.minimum_kept }}
