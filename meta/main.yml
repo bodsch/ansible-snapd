@@ -2,6 +2,7 @@
 
 galaxy_info:
   role_name: snapd
+  namespace: bodsch
 
   author: Bodo Schulz
   description: ansible role to disable and removes (purges) snapd and related services/packages.

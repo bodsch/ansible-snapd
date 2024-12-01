@@ -34,7 +34,7 @@
         - snap_list_output.rc == 0
 
     - name: uninstall snaps
-      include_tasks: "uninstall_snaps.yml"
+      ansible.builtin.include_tasks: "uninstall_snaps.yml"
       when:
         - snap_list_output.rc == 0
         - snap_list | length > 0
@@ -59,9 +59,9 @@
   when:
     - snapd_purge
   block:
-  - name: Unmount snap
+    - name: Unmount snap
       become: true
-      mount:
+      ansible.posix.mount:
         path: "/var/snap/firefox/common/host-hunspell"
         state: "{{ item }}"
       with_items:
@@ -80,7 +80,7 @@
         - snapd_block_packages | count > 0
       block:
         - name: block later installations of snapd
-        become: true
+          become: true
           ansible.builtin.template:
             src: apt/preferences.d/snapd.pref.j2
             dest: /etc/apt/preferences.d/snapd.pref
