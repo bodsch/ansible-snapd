@@ -31,6 +31,7 @@ jobs:
         python_version:
           - "3.10"
           - "3.11"
+          - "3.12"
         ansible-version:
           - '8.5'
         scenario:
@@ -69,17 +70,19 @@ jobs:
   ubuntu:
     name: "${{ matrix.image }} / ansible: ${{ matrix.ansible-version }}"
     runs-on: ubuntu-22.04
-    if: ${{ github.event_name == 'schedule' || github.event.workflow_run.conclusion == 'success' }}
+    needs:
+      - debian
     strategy:
       fail-fast: false
       matrix:
         image:
           - ubuntu:20.04
           - ubuntu:22.04
-          - ubuntu:23.04
+          - ubuntu:24.04
         python_version:
           - "3.10"
           - "3.11"
+          - "3.12"
         ansible-version:
           - '8.5'
         scenario:
