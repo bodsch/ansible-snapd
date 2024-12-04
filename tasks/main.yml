@@ -59,14 +59,36 @@
   when:
     - snapd_purge
   block:
-    - name: Unmount snap
+
+    - name: get mountpoints
+      ansible.builtin.setup:
+        gather_subset:
+          - mounts
+
+    - name: find nap mountpoints
+      ansible.builtin.set_fact:
+        snap_mounts: "{{ ansible_mounts | snap_mounts }}"
+
+    - name: unmount snap
       become: true
       ansible.posix.mount:
-        path: "/var/snap/firefox/common/host-hunspell"
-        state: "{{ item }}"
-      with_items:
-        - unmounted
-        - absent
+        path: "{{ item }}"
+        state: unmounted
+      loop:
+        - "{{ snap_mounts }}"
+      when:
+        - snap_mounts | count > 0
+
+    - name: remove snap mountpoint^
+      become: true
+      ansible.posix.mount:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ snap_mounts }}"
+      when:
+        - snap_mounts | count > 0
+
     - name: remove snapd packages
       become: true
       ansible.builtin.package:
