@@ -1,4 +1,5 @@
 ---
+
 - name: uninstall snaps
   community.general.snap:
     name: "{{ item | split | first }}"
